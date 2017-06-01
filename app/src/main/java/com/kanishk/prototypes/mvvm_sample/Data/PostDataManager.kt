@@ -14,8 +14,8 @@ import java.util.ArrayList
 
 object PostDataManager {
 
-    fun getPosts(c: Context) {
-        val events = c as PostEvent
+    fun getPosts(c: Context, pe: PostEvent) {
+        val events = pe
         val list = ArrayList<Post>()
         list.add(Post("Post 1", "A new post using MVVM!", "kanishk"))
         list.add(Post("Post 2", "A second post using MVVM!", "kanishk"))

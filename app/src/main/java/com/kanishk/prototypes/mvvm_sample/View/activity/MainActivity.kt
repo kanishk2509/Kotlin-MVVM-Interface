@@ -1,35 +1,31 @@
 package com.kanishk.prototypes.mvvm_sample.View.activity
 
+import android.annotation.SuppressLint
 import android.databinding.DataBindingUtil
+import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentPagerAdapter
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
-
-import com.kanishk.prototypes.mvvm_sample.Bus.Event.PostEvent
-import com.kanishk.prototypes.mvvm_sample.Bus.EventModel.PostEventModel
-import com.kanishk.prototypes.mvvm_sample.Data.PostDataManager
 import com.kanishk.prototypes.mvvm_sample.R
-import com.kanishk.prototypes.mvvm_sample.View.adapter.PostAdapter
+import com.kanishk.prototypes.mvvm_sample.View.fragment.MainFragment
 import com.kanishk.prototypes.mvvm_sample.ViewModel.MainActivityViewModel
 import com.kanishk.prototypes.mvvm_sample.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity(), PostEvent {
+class MainActivity : AppCompatActivity(), MainFragment.OnFragmentInteractionListener {
 
     private val context = this@MainActivity
-    private var recyclerView: RecyclerView? = null
-    private var adapter: PostAdapter? = null
+    private var tabLayout: TabLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupBindings()
         setupViews()
-        PostDataManager.getPosts(context)
     }
 
     private fun setupBindings() {
@@ -40,17 +36,19 @@ class MainActivity : AppCompatActivity(), PostEvent {
     private fun setupViews() {
         val toolbar = findViewById(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
-        setupRecyclerView()
+        setupViewPager()
     }
 
-    private fun setupRecyclerView() {
-        recyclerView = findViewById(R.id.recycler_view) as RecyclerView
-        val linear = LinearLayoutManager(context)
-        linear.reverseLayout = true
-        recyclerView!!.layoutManager = linear
-        recyclerView!!.setHasFixedSize(true)
-        recyclerView!!.itemAnimator = DefaultItemAnimator()
-        recyclerView!!.isNestedScrollingEnabled = false
+    @SuppressLint("PrivateResource")
+    private fun setupViewPager() {
+        val pagerAdapter = SectionPagerAdapter()
+        val viewPager: ViewPager? = findViewById(R.id.container) as ViewPager
+        viewPager?.adapter = pagerAdapter
+        viewPager?.offscreenPageLimit = 3
+        tabLayout = findViewById(R.id.tabs) as TabLayout?
+        tabLayout?.setupWithViewPager(viewPager)
+        tabLayout?.setSelectedTabIndicatorHeight(12)
+        tabLayout?.setSelectedTabIndicatorColor(context.resources.getColor(R.color.abc_tint_spinner))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -63,14 +61,29 @@ class MainActivity : AppCompatActivity(), PostEvent {
         return id == R.id.action_settings || super.onOptionsItemSelected(item)
     }
 
-    override fun onDataReceived(eventModel: PostEventModel) {
-        adapter = PostAdapter(context, eventModel.posts)
-        recyclerView!!.adapter = adapter
-        Toast.makeText(context, "New data incoming!", Toast.LENGTH_SHORT).show()
+    inner class SectionPagerAdapter : FragmentPagerAdapter(supportFragmentManager) {
+
+        var tabTitles: List<String>? = listOf("hello", "world", "hey")
+
+        override fun getItem(position: Int): Fragment {
+            when (position) {
+                0 -> return MainFragment.newInstance()
+                1 -> return MainFragment.newInstance()
+                2 -> return MainFragment.newInstance()
+            }
+            return MainFragment.newInstance()
+        }
+
+        override fun getCount(): Int {
+            return 3
+        }
+
+        override fun getPageTitle(position: Int): CharSequence {
+            return tabTitles!![position]
+        }
     }
 
-    override fun onDataUpdate(eventModel: PostEventModel) {
-        adapter!!.addNewPost(eventModel.posts[0])
-        recyclerView!!.smoothScrollToPosition(0)
+    override fun onFragmentInteraction(uri: Uri) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
