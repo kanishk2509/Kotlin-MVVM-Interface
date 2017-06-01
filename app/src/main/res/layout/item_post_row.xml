@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.kanishk.prototypes.mvvm_sample.ViewModel.PostViewModel">
+        </variable>
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/content"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="#fff">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="@{viewModel.postTitle}"
+            android:textSize="18dp"/>
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.postDescription}"
+            android:textSize="16dp"
+            android:layout_below="@+id/title"
+            android:layout_margin="8dp"
+            android:maxLines="3"
+            android:onClick="@{viewModel.onClickPost}"/>
+
+        <TextView
+            android:id="@+id/posted_by"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.postAuthor}"
+            android:textSize="14dp"
+            android:layout_below="@+id/description"
+            android:layout_margin="8dp"/>
+
+    </RelativeLayout>
+</layout>
